@@ -1,12 +1,15 @@
-#include <unistd.h>     //use sleep()
+#include <unistd.h>  //use sleep()
 #include <fstream>
 #include <iostream>
 #include <queue>
+#include <stack>
 #include <vector>
 using namespace std;
-void print(vector<vector<int>> a, int m, int n, int cr, int cc) {
-    for (int r = 0; r < m; ++r) {
-        for (int c = 0; c < n; ++c) {
+void print(vector<vector<int>> &a, int cr, int cc, int &path_length,
+           int &point) {
+    system("cls");
+    for (int r = 0; r < a.size(); ++r) {
+        for (int c = 0; c < a[0].size(); ++c) {
             if (r == cr && c == cc)
                 cout << "* ";
             else
@@ -14,8 +17,18 @@ void print(vector<vector<int>> a, int m, int n, int cr, int cc) {
         }
         cout << endl;
     }
+    cout << "Path length: " << ++path_length << endl;
+    if (a[cr][cc] == 2) {
+        a[cr][cc] = 0;
+        point += 10;
+    } else
+        --point;
+    cout << "Point: " << point;
+    sleep(0.5);
 }
-void level_1_2(vector<vector<int>> a, int m, int n, int sm, int sn) {
+void level_1_2(vector<vector<int>> &a, int sm, int sn) {
+    if (!a.size()) return;
+    int m = a.size(), n = a[0].size();
     int dm, dn;
     for (int r = 0; r < m; ++r) {
         for (int c = 0; c < n; ++c) {
@@ -24,12 +37,12 @@ void level_1_2(vector<vector<int>> a, int m, int n, int sm, int sn) {
     }
     vector<vector<int>> b(m, vector<int>(n, INT_MAX));
     vector<vector<pair<int, int>>> pre(m, vector<pair<int, int>>(n));
-    queue<vector<int>> loc;
+    queue<pair<int, int>> loc;
     loc.push({dm, dn});
     b[dm][dn] = 0;
     int dr[]{1, 0, -1, 0}, dc[]{0, 1, 0, -1};
     while (!loc.empty()) {
-        int cr = loc.front()[0], cc = loc.front()[1];
+        int cr = loc.front().first, cc = loc.front().second;
         for (int i = 0; i < 4; ++i) {
             int nr = cr + dr[i], nc = cc + dc[i];
             if (nr >= 0 && nr < m && nc >= 0 && nc < n && a[nr][nc] == 0 &&
@@ -41,26 +54,51 @@ void level_1_2(vector<vector<int>> a, int m, int n, int sm, int sn) {
         }
         loc.pop();
     }
-    int path_length = 0;
+    int path_length = -1, point = 1;
     pre[dm][dn] = {-1, -1};
-    for (int cr = sm, cc = sn; cr != -1 || cc != -1; ++path_length) {
-        system("cls");
-        print(a, m, n, cr, cc);
+    for (int cr = sm, cc = sn; cr != -1 || cc != -1;) {
+        print(a, cr, cc, path_length, point);
         int tmpr = pre[cr][cc].first;
         int tmpc = pre[cr][cc].second;
         cr = tmpr;
         cc = tmpc;
-        cout << "Path length: " << path_length << endl;
-        cout << "Point: ";
-        if (cr == -1 && cc == -1)
-            cout << 11 - path_length;
-        else
-            cout << -path_length;
-        sleep(1);
     }
+    cout << "\nPress enter to exit!";
     cin.get();
+    ofstream fout("output.txt");
+    fout << "Path length: " << path_length << endl;
+    fout << "Game point: " << point << endl;
+    fout.close();
 }
-void level_3(int **a, int m, int n, int sm, int sn) {}
+void dfs(vector<vector<int>> &a, vector<vector<bool>> &b, int cr, int cc,
+         int &path_length, int &point) {
+    print(a, cr, cc, path_length, point);
+    int m = a.size(), n = a[0].size();
+    int dr[]{1, 0, -1, 0}, dc[]{0, 1, 0, -1};
+    for (int i = 0; i < 4; ++i) {
+        int nr = cr + dr[i], nc = cc + dc[i];
+        if (nr >= 0 && nr < m && nc >= 0 && nc < n &&
+            (a[nr][nc] == 0 || a[nr][nc] == 2) && b[nr][nc] == false) {
+            b[nr][nc] = true;
+            dfs(a, b, nr, nc, path_length, point);
+            print(a, cr, cc, path_length, point);
+        }
+    }
+}
+void level_3(vector<vector<int>> &a, int sm, int sn) {
+    if (!a.size()) return;
+    int m = a.size(), n = a[0].size();
+    vector<vector<bool>> b(m, vector<bool>(n, false));
+    b[sm][sn] = true;
+    int path_length = -1, point = 1;
+    dfs(a, b, sm, sn, path_length, point);
+    cout << "\nPress enter to exit!";
+    cin.get();
+    ofstream fout("output.txt");
+    fout << "Path length: " << path_length << endl;
+    fout << "Game point: " << point << endl;
+    fout.close();
+}
 int main() {
     ifstream fin("input.txt");
     int m, n, sm, sn;
@@ -72,5 +110,6 @@ int main() {
         }
     }
     fin >> sm >> sn;
-    level_1_2(a, m, n, sm, sn);
+    fin.close();
+    level_3(a, sm, sn);
 }

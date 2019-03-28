@@ -3,6 +3,8 @@
         "fstream": "cpp",
         "new": "cpp",
         "unordered_set": "cpp",
-        "iosfwd": "cpp"
+        "iosfwd": "cpp",
+        "iostream": "cpp",
+        "ostream": "cpp"
     }
 }
