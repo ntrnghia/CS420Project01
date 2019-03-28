@@ -11,7 +11,7 @@ void print(vector<vector<int>> &a, int cr, int cc, int &path_length,
     for (int r = 0; r < a.size(); ++r) {
         for (int c = 0; c < a[0].size(); ++c) {
             if (r == cr && c == cc)
-                cout << "* ";
+                cout << "@ ";
             else
                 cout << a[r][c] << ' ';
         }
@@ -26,7 +26,8 @@ void print(vector<vector<int>> &a, int cr, int cc, int &path_length,
     cout << "Point: " << point;
     sleep(0.5);
 }
-void level_1_2(vector<vector<int>> &a, int sm, int sn) {
+void level_1_2(vector<vector<int>> &a, int sm, int sn, int &path_length,
+               int &point) {
     if (!a.size()) return;
     int m = a.size(), n = a[0].size();
     int dm, dn;
@@ -54,7 +55,6 @@ void level_1_2(vector<vector<int>> &a, int sm, int sn) {
         }
         loc.pop();
     }
-    int path_length = -1, point = 1;
     pre[dm][dn] = {-1, -1};
     for (int cr = sm, cc = sn; cr != -1 || cc != -1;) {
         print(a, cr, cc, path_length, point);
@@ -63,12 +63,6 @@ void level_1_2(vector<vector<int>> &a, int sm, int sn) {
         cr = tmpr;
         cc = tmpc;
     }
-    cout << "\nPress enter to exit!";
-    cin.get();
-    ofstream fout("output.txt");
-    fout << "Path length: " << path_length << endl;
-    fout << "Game point: " << point << endl;
-    fout.close();
 }
 void dfs(vector<vector<int>> &a, vector<vector<bool>> &b, int cr, int cc,
          int &path_length, int &point) {
@@ -85,23 +79,17 @@ void dfs(vector<vector<int>> &a, vector<vector<bool>> &b, int cr, int cc,
         }
     }
 }
-void level_3(vector<vector<int>> &a, int sm, int sn) {
+void level_3(vector<vector<int>> &a, int sm, int sn, int &path_length,
+             int &point) {
     if (!a.size()) return;
     int m = a.size(), n = a[0].size();
     vector<vector<bool>> b(m, vector<bool>(n, false));
     b[sm][sn] = true;
-    int path_length = -1, point = 1;
     dfs(a, b, sm, sn, path_length, point);
-    cout << "\nPress enter to exit!";
-    cin.get();
-    ofstream fout("output.txt");
-    fout << "Path length: " << path_length << endl;
-    fout << "Game point: " << point << endl;
-    fout.close();
 }
 int main() {
     ifstream fin("input.txt");
-    int m, n, sm, sn;
+    int m, n, sm, sn, lv;
     fin >> m >> n;
     vector<vector<int>> a(m, vector<int>(n));
     for (int i = 0; i < m; ++i) {
@@ -111,5 +99,25 @@ int main() {
     }
     fin >> sm >> sn;
     fin.close();
-    level_3(a, sm, sn);
+    cout << "Which level you want to try: ";
+    cin >> lv;
+    int path_length = -1, point = 1;
+    switch (lv) {
+        case 1:
+        case 2:
+            level_1_2(a, sm, sn, path_length, point);
+            break;
+        case 3:
+            level_3(a, sm, sn, path_length, point);
+            break;
+        default:
+            break;
+    }
+    cout << "\nPress enter to exit!";
+    cin.get();
+    cin.get();
+    ofstream fout("output.txt");
+    fout << "Path length: " << path_length << endl;
+    fout << "Game point: " << point << endl;
+    fout.close();
 }

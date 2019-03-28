@@ -1,2 +1,2 @@
-Path length: 52
-Game point: 3
+Path length: 5
+Game point: 6
