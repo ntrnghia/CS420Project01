@@ -24,7 +24,7 @@ void print(vector<vector<int>> &a, int cr, int cc, int &path_length,
     } else
         --point;
     cout << "Point: " << point;
-    sleep(0.5);
+    sleep(0.75);
 }
 void level_1_2(vector<vector<int>> &a, int sm, int sn, int &path_length,
                int &point) {
