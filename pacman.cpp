@@ -58,11 +58,13 @@ void level_1_2(vector<vector<int>> &a, int sm, int sn, int &path_length,
     pre[dm][dn] = {-1, -1};
     for (int cr = sm, cc = sn; cr != -1 || cc != -1;) {
         print(a, cr, cc, path_length, point);
+        a[cr][cc] = 5;
         int tmpr = pre[cr][cc].first;
         int tmpc = pre[cr][cc].second;
         cr = tmpr;
         cc = tmpc;
     }
+    cout << "\n<5 is pacman trace>";
 }
 void dfs(vector<vector<int>> &a, vector<vector<bool>> &b, int cr, int cc,
          int &path_length, int &point) {
